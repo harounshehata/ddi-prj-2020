@@ -83,7 +83,7 @@ def matrix_multiplication(rdd1_row_indices, rdd2_col_indices):
 def matrix_multiplication_2(rdd1_row_indices, rdd2_col_indices):
         s1 = rdd1_row_indices.cartesian(rdd2_col_indices)
         print(f"Cartesian {s1.collect()}")
-        s2 = s1.map(lambda x: ((x[0][0], x[1][0]), dot_product(x[0][1], x[1][1])))
+        s2 = s1.map(lambda x: ((x[0][0], x[1][0]), dot_product_with_indices(x[0][1], x[1][1])))
         print(f"DotProd {s2.collect()}")
         s3 = s2.sortByKey()
         print(f"Sort {s3.collect()}")
