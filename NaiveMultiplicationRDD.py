@@ -41,10 +41,8 @@ def add_indices_2(rdd):
 # transpose matrix with indices
 def transpose(rdd):
         s1 = rdd.map(lambda x: ((x[1], (x[0],x[2]))))
-        s2 = s1.groupByKey()
-        s3 = s2.sortByKey()
-        s4 = s3.map(lambda x: (x[0], sorted(list(x[1]), key=lambda x: x[0])))
-        return s4
+        s2 = s1.groupByKey().sortByKey().map(lambda x: (x[0], sorted(list(x[1]), key=lambda x: x[0])))
+        return s2
 
 def remove_indices(rdd):
         s1 = rdd.map(lambda x: x[1])
@@ -84,16 +82,12 @@ def matrix_multiplication_2(rdd1_row_indices, rdd2_col_indices):
         s1 = rdd1_row_indices.cartesian(rdd2_col_indices)
         print(f"Cartesian {s1.collect()}")
         s2 = s1.map(lambda x: ((x[0][0], x[1][0]), dot_product_with_indices(x[0][1], x[1][1])))
-        print(f"DotProd {s2.collect()}")
         s3 = s2.sortByKey()
-        print(f"Sort {s3.collect()}")
-        #s4 = s3.map(lambda x: (x[0][0], (x[0][1], x[1])))
-        #print(f"RowKey {s4.collect()}")
-        #s5 = s4.groupByKey()
-        #print(f"GroupRow {s5.collect()}")
-        #s6 = s5.map(lambda x: (x[0], list(map(lambda y: y[1], list(x[1])))))
-        #print(f"Map {s6.collect()}")
-        return s3
+        print(f"Sort {s3.collect()}") # [((0, 0), 14), ((0, 1), 32), ((0, 2), 50), ((1, 0), 32), ((1, 1), 77), ((1, 2), 122), ((2, 0), 50), ((2, 1), 122), ((2, 2), 194)]
+        s4 = s3.map(lambda x: (x[0][0], (x[0][1], x[1])))
+        print(f"RowKey {s4.collect()}")
+        s5 = s4.groupByKey().map(lambda x : (x[0], list(x[1]))).sortByKey()
+        return s5
 
 def dot_product(l1, l2):
         return sum(x*y for x,y in zip(l1,l2))
@@ -105,7 +99,7 @@ print("mutliplication one:\n")
 #A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
 A_times_A_t_res = matrix_multiplication_2(add_indices_2(data), add_indices_2(data))
 print("mutliplication two:\n")
-#A_times_A_t_times_A_res = matrix_multiplication(A_times_A_t_res, add_single_indices(data_transposed))
+A_times_A_t_times_A_res = matrix_multiplication_2(A_times_A_t_res, add_indices_2(data_transposed))
 
 
 
