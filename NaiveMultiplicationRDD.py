@@ -28,7 +28,7 @@ data = sc.parallelize(sample_data)
 def add_indices(rdd):
         s1 = rdd.zipWithIndex() # row index
         s2 = s1.flatMap(lambda x: [(x[1],j,e) for (j,e) in enumerate(x[0])]) # column index
-        print(s2)
+        print(f"Add indices: {s2.collect()}")
         return s2
 
 # transpose matrix with indices
@@ -59,17 +59,17 @@ def matrix_multiplication(rdd1_row_indices, rdd2_col_indices):
         print(rdd1_row_indices.collect())
         print(rdd2_col_indices.collect())
         s1 = rdd1_row_indices.cartesian(rdd2_col_indices)
-        print(s1.collect())
+        print(f"Cartesian {s1.collect()}")
         s2 = s1.map(lambda x: ((x[0][0], x[1][0]), dot_product(x[0][1], x[1][1])))
-        print(s2.collect())
+        print(f"DotProd {s2.collect()}")
         s3 = s2.sortByKey()
-        print(s3.collect())
+        print(f"Sort {s3.collect()}")
         s4 = s3.map(lambda x: (x[0][0], (x[0][1], x[1])))
-        print(s4.collect())
+        print(f"RowKey {s4.collect()}")
         s5 = s4.groupByKey()
-        print(s5.collect())
+        print(f"GroupRow {s5.collect()}")
         s6 = s5.map(lambda x: (x[0], list(map(lambda y: y[1], list(x[1])))))
-        print(s6.collect())
+        print(f"Map {s6.collect()}")
         return s6
 
 def dot_product(l1, l2):
@@ -77,7 +77,6 @@ def dot_product(l1, l2):
 
 print("mutliplication one:\n")
 A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
-add_indices(data)
 print("mutliplication two:\n")
 A_times_A_t_times_A_res = matrix_multiplication(A_times_A_t_res, add_single_indices(data_transposed))
 
