@@ -15,15 +15,15 @@ conf = (SparkConf()
         .set("spark.broadcast.compress", "true")
         .set("spark.executor.memory", "16g"))
 sc = SparkContext(conf=conf)
-sc.setLogLevel("WARN")
+#sc.setLogLevel("WARN")
 
-# data = sc.textFile(dataset)
-# data = data.map(lambda v: list(map(float, v.split())))
+data = sc.textFile(dataset)
+data = data.map(lambda v: list(map(float, v.split())))
 
-sample_data = [[1,2,3], [4,5,6], [7,8,9]]
-sample_data_col = [[1,4,7], [2,5,8], [3,6,9]]
+#sample_data = [[1,2,3], [4,5,6], [7,8,9]]
+#sample_data_col = [[1,4,7], [2,5,8], [3,6,9]]
 
-data = sc.parallelize(sample_data)
+data = sc.parallelize(data)
 
 def add_indices(rdd):
         s1 = rdd.zipWithIndex() # row index
