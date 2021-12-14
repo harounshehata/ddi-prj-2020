@@ -8,7 +8,7 @@ dataset = "/wrk/group/grp-ddi-2021/datasets/data-2-sample.txt"
 # dataset = "/wrk/group/grp-ddi-2021/datasets/data-2.txt"
 
 conf = (SparkConf()
-        .setAppName("pfabel")
+        .setAppName("sheharou")
         .setMaster("spark://ukko2-10.local.cs.helsinki.fi:7077")
         .set("spark.cores.max", "10")
         .set("spark.rdd.compress", "true")
@@ -35,7 +35,7 @@ def add_indices_2(rdd):
         s1 = rdd.zipWithIndex() # row index
         s2 = s1.flatMap(lambda x: [(x[1],(j,e)) for (j,e) in enumerate(x[0])]) # column index
         print(f"Add indices: {s2.collect()}")
-        s3 = s2.groupByKey().map(lambda x : (x[0], list(x[1]))).sortbyKey()
+        s3 = s2.groupByKey().map(lambda x : (x[0], list(x[1]))).sortByKey()
         print(f"GroupRow {s3.collect()}") # [(2, [(0, 7), (1, 8), (2, 9)]), (0, [(0, 1), (1, 2), (2, 3)]), (1, [(0, 4), (1, 5), (2, 6)])]
         return s3
 # transpose matrix with indices
