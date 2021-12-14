@@ -17,14 +17,6 @@ conf = (SparkConf()
 sc = SparkContext(conf=conf)
 sc.setLogLevel("WARN")
 
-class element():
-    def __init__(self, row, column, value):
-        self.row = row
-        self.column = column
-        self.value = value
-
-    def __repr__(self):
-        return "(Row:{self.row}-Col:{self.column}-Value:{self.value})"
 # data = sc.textFile(dataset)
 # data = data.map(lambda v: list(map(float, v.split())))
 
@@ -35,7 +27,7 @@ data = sc.parallelize(sample_data)
 
 def add_indices(rdd):
         s1 = rdd.zipWithIndex() # row index
-        s2 = s1.flatMap(lambda x: [element(x[1],j,e) for (j,e) in enumerate(x[0])]) # column index
+        s2 = s1.flatMap(lambda x: [(x[1],j,e) for (j,e) in enumerate(x[0])]) # column index
         print(s2)
         return s2
 
@@ -84,10 +76,10 @@ def dot_product(l1, l2):
         return sum(x*y for x,y in zip(l1,l2))
 
 print("mutliplication one:\n")
-#A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
+A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
 add_indices(data)
 print("mutliplication two:\n")
-#A_times_A_t_times_A_res = matrix_multiplication(A_times_A_t_res, add_single_indices(data_transposed))
+A_times_A_t_times_A_res = matrix_multiplication(A_times_A_t_res, add_single_indices(data_transposed))
 
 
 
