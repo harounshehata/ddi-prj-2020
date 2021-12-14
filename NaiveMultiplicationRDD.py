@@ -80,7 +80,7 @@ def matrix_multiplication_2(rdd1_row_indices, rdd2_col_indices):
         s4 = s3.map(lambda x: (x[0][0], (x[0][1], x[1])))
         #print(f"RowKey {s4.collect()}")
         s5 = s4.groupByKey().map(lambda x : (x[0], list(x[1]))).sortByKey()
-        print(f"Mult: {s5.collect()}")
+        #print(f"Mult: {s5.collect()}")
         return s5
 
 def dot_product(l1, l2):
@@ -98,7 +98,7 @@ print("mutliplication one:\n")
 A_times_A_t_res = matrix_multiplication_2(add_indices_2(data), add_indices_2(data))
 print("mutliplication two:\n")
 A_times_A_t_times_A_res = matrix_multiplication_2(A_times_A_t_res, add_indices_2(data_transposed))
-
+print(f"{A_times_A_t_times_A_res.collect()}")
 
 
 
