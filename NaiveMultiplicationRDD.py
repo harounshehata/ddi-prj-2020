@@ -35,8 +35,8 @@ def add_indices_2(rdd):
         s1 = rdd.zipWithIndex() # row index
         s2 = s1.flatMap(lambda x: [(x[1],(j,e)) for (j,e) in enumerate(x[0])]) # column index
         print(f"Add indices: {s2.collect()}")
-        s3 = s2.groupByKey().map(lambda x : (x[0], list(x[1])))     
-        print(f"GroupRow {s3.collect()}")
+        s3 = s2.groupByKey().map(lambda x : (x[0], list(x[1]))).sortbyKey()
+        print(f"GroupRow {s3.collect()}") # [(2, [(0, 7), (1, 8), (2, 9)]), (0, [(0, 1), (1, 2), (2, 3)]), (1, [(0, 4), (1, 5), (2, 6)])]
         return s3
 # transpose matrix with indices
 def transpose(rdd):
@@ -79,15 +79,31 @@ def matrix_multiplication(rdd1_row_indices, rdd2_col_indices):
         #print(f"Map {s6.collect()}")
         return s3
 
+
+def matrix_multiplication_2(rdd1_row_indices, rdd2_col_indices):
+        s1 = rdd1_row_indices.cartesian(rdd2_col_indices)
+        print(f"Cartesian {s1.collect()}")
+        s2 = s1.map(lambda x: ((x[0][0], x[1][0]), dot_product(x[0][1], x[1][1])))
+        print(f"DotProd {s2.collect()}")
+        s3 = s2.sortByKey()
+        print(f"Sort {s3.collect()}")
+        #s4 = s3.map(lambda x: (x[0][0], (x[0][1], x[1])))
+        #print(f"RowKey {s4.collect()}")
+        #s5 = s4.groupByKey()
+        #print(f"GroupRow {s5.collect()}")
+        #s6 = s5.map(lambda x: (x[0], list(map(lambda y: y[1], list(x[1])))))
+        #print(f"Map {s6.collect()}")
+        return s3
+
 def dot_product(l1, l2):
         return sum(x*y for x,y in zip(l1,l2))
 
-#def dot_product_with_indices(l1,l2):
-        
+def dot_product_with_indices(l1,l2):
+        return sum(x[1]*y[1] for x,y in zip(l1,l2))
 
-add_indices_2(data)
 print("mutliplication one:\n")
 #A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
+A_times_A_t_res = matrix_multiplication(add_indices_2(data), add_indices_2(data))
 print("mutliplication two:\n")
 #A_times_A_t_times_A_res = matrix_multiplication(A_times_A_t_res, add_single_indices(data_transposed))
 
