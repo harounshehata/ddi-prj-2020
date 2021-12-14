@@ -99,6 +99,6 @@ A_times_A_t_res = matrix_multiplication_2(add_indices_2(data), add_indices_2(dat
 print("mutliplication two:\n")
 A_times_A_t_times_A_res = matrix_multiplication_2(A_times_A_t_res, add_indices_2(data_transposed))
 print(f"{A_times_A_t_times_A_res.collect()}")
-
+result = A_times_A_t_times_A_res.flatMap(lambda x: [y[1] for y in enumerate(x[1])])
 
 
