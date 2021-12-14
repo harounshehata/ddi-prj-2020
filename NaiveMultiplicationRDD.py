@@ -17,13 +17,12 @@ conf = (SparkConf()
 sc = SparkContext(conf=conf)
 #sc.setLogLevel("WARN")
 
-data = sc.textFile(dataset)
-data = data.map(lambda v: list(map(float, v.split())))
+#data = sc.textFile(dataset)
+#data = data.map(lambda v: list(map(float, v.split())))
 
-#sample_data = [[1,2,3], [4,5,6], [7,8,9]]
-#sample_data_col = [[1,4,7], [2,5,8], [3,6,9]]
+sample_data = [[1,2,3], [4,5,6], [7,8,9]]
 
-data = sc.parallelize(data)
+data = sc.parallelize(sample_data)
 
 def add_indices(rdd):
         s1 = rdd.zipWithIndex() # row index
@@ -48,12 +47,6 @@ def remove_indices(rdd):
         s1 = rdd.map(lambda x: x[1])
         s2 = s1.map(lambda x: list(map(lambda y: y[1], x)))
         return s2
-
-data_indices = add_indices(data)
-data_transposed_indices = transpose(data_indices)
-data_transposed = remove_indices(data_transposed_indices)
-print("Data transposed:")
-print(data_transposed.collect())
 
 def add_single_indices(rdd):
         s1 = rdd.zipWithIndex()
@@ -80,13 +73,14 @@ def matrix_multiplication(rdd1_row_indices, rdd2_col_indices):
 
 def matrix_multiplication_2(rdd1_row_indices, rdd2_col_indices):
         s1 = rdd1_row_indices.cartesian(rdd2_col_indices)
-        print(f"Cartesian {s1.collect()}")
+        #print(f"Cartesian {s1.collect()}")
         s2 = s1.map(lambda x: ((x[0][0], x[1][0]), dot_product_with_indices(x[0][1], x[1][1])))
         s3 = s2.sortByKey()
-        print(f"Sort {s3.collect()}") # [((0, 0), 14), ((0, 1), 32), ((0, 2), 50), ((1, 0), 32), ((1, 1), 77), ((1, 2), 122), ((2, 0), 50), ((2, 1), 122), ((2, 2), 194)]
+        #print(f"Sort {s3.collect()}") # [((0, 0), 14), ((0, 1), 32), ((0, 2), 50), ((1, 0), 32), ((1, 1), 77), ((1, 2), 122), ((2, 0), 50), ((2, 1), 122), ((2, 2), 194)]
         s4 = s3.map(lambda x: (x[0][0], (x[0][1], x[1])))
-        print(f"RowKey {s4.collect()}")
+        #print(f"RowKey {s4.collect()}")
         s5 = s4.groupByKey().map(lambda x : (x[0], list(x[1]))).sortByKey()
+        print(f"Mult: {s5.collect()}")
         return s5
 
 def dot_product(l1, l2):
@@ -94,6 +88,10 @@ def dot_product(l1, l2):
 
 def dot_product_with_indices(l1,l2):
         return sum(x[1]*y[1] for x,y in zip(l1,l2))
+
+data_indices = add_indices(data)
+data_transposed_indices = transpose(data_indices)
+data_transposed = remove_indices(data_transposed_indices)
 
 print("mutliplication one:\n")
 #A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
