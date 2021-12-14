@@ -1,6 +1,5 @@
-# Name: Bela Pfahl
-# student ID: 015651253
 
+#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
 from pyspark import SparkContext, SparkConf
 from operator import eq
 
@@ -37,6 +36,7 @@ data = sc.parallelize(sample_data)
 def add_indices(rdd):
         s1 = rdd.zipWithIndex() # row index
         s2 = s1.flatMap(lambda x: [element(x[1],j,e) for (j,e) in enumerate(x[0])]) # column index
+        print(s2)
         return s2
 
 # transpose matrix with indices
@@ -84,10 +84,10 @@ def dot_product(l1, l2):
         return sum(x*y for x,y in zip(l1,l2))
 
 print("mutliplication one:\n")
-A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
-
+#A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
+add_indices(data)
 print("mutliplication two:\n")
-A_times_A_t_times_A_res = matrix_multiplication(A_times_A_t_res, add_single_indices(data_transposed))
+#A_times_A_t_times_A_res = matrix_multiplication(A_times_A_t_res, add_single_indices(data_transposed))
 
 
 
