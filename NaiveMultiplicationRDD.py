@@ -103,7 +103,7 @@ def dot_product_with_indices(l1,l2):
 
 print("mutliplication one:\n")
 #A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
-A_times_A_t_res = matrix_multiplication(add_indices_2(data), add_indices_2(data))
+A_times_A_t_res = matrix_multiplication_2(add_indices_2(data), add_indices_2(data))
 print("mutliplication two:\n")
 #A_times_A_t_times_A_res = matrix_multiplication(A_times_A_t_res, add_single_indices(data_transposed))
 
