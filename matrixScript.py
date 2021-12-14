@@ -10,14 +10,13 @@ conf = (SparkConf()
         .set("spark.broadcast.compress", "true")
         .set("spark.executor.memory", "16g"))
 sc = SparkContext(conf=conf)
-sc.setLogLevel("WARN")
+#sc.setLogLevel("WARN")
 
-# data = sc.textFile(dataset)
-# data = data.map(lambda v: list(map(float, v.split())))
+data = sc.textFile(dataset)
+data = data.map(lambda v: list(map(float, v.split())))
 
-sample_data = [[1,2,3], [4,5,6], [7,8,9]]
-
-data = sc.parallelize(sample_data)
+#sample_data = [[1,2,3], [4,5,6], [7,8,9]]
+#data = sc.parallelize(sample_data)
 
 def add_indices(rdd):
         s1 = rdd.zipWithIndex()
@@ -54,12 +53,9 @@ data_indices = add_indices(data)
 data_transposed_indices = transpose(data_indices)
 data_transposed = remove_indices(data_transposed_indices)
 
-print("mutliplication one:\n")
 A_times_A_t_res = matrix_multiplication(add_single_indices(data), add_single_indices(data))
-
-print("mutliplication two:\n")
 A_times_A_t_times_A_res = matrix_multiplication(A_times_A_t_res, add_single_indices(data_transposed))
-print(A_times_A_t_times_A_res.collect())
+print(A_times_A_t_times_A_res.map(lambda x : x[1]).collect())
 
 
 
